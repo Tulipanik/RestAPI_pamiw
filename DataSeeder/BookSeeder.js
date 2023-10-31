@@ -17,4 +17,4 @@ function createBook() {
 
 let BOOKS = Array.from({ length: 50 }, () => createBook());
 
-module.exports = BOOKS;
+module.exports = { BOOKS, Book };
