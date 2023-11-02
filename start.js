@@ -1,86 +1,36 @@
 const dotenv = require("dotenv");
 const express = require("express");
 const bodyParser = require("body-parser");
-let BOOKS = require("./DataSeeder/BookSeeder.js");
+const fs = require("fs");
+const bookRoutes = require("./LibraryAPI/Controllers/LibraryController.js");
+const { sequelize } = require("./Database/startBase.js");
 
-BOOKS = BOOKS.BOOKS;
+sequelize.sync().then(() => {
+  console.log("Database synchronization successful");
+});
+
 dotenv.config();
 const app = express();
 
-app.use(
-  bodyParser.urlencoded({
-    extended: true,
-  })
-);
-app.use(bodyParser.json());
+const configPath = "./config/default.json";
 
-app.get("/getAllBooks", (req, res) => {
-  console.log(BOOKS[0]);
-  return res.status(200).json(BOOKS);
-});
-
-app.get("/getBookByGenre/:genre", (req, res) => {
-  return res.status(200).json(
-    BOOKS.filter((book) => {
-      return book.genre == req.params.genre;
+try {
+  app.use("", bookRoutes);
+  app.use(
+    bodyParser.urlencoded({
+      extended: true,
     })
   );
-});
+  app.use(bodyParser.json());
 
-app.get("/getBookByAuthor/:author", (req, res) => {
-  return res.json(
-    BOOKS.filter((item) => {
-      return item.author == req.params.author;
-    })
-  );
-});
+  const config = JSON.parse(fs.readFileSync(configPath, "utf8"));
 
-app.post("/addBook", (req, res) => {
-  let toAdd = req.body;
+  const port = config.port;
 
-  BOOKS.push(toAdd);
-  res.send("Dodano do bazy");
-});
-
-app.put("/updateBook/:id", (req, res) => {
-  const bookId = Number(req.params.id);
-  const toUpdate = BOOKS[bookId];
-
-  if (bookId >= BOOKS.length) {
-    return res.status(404).json({ error: "Book not found" });
-  }
-
-  const update = req.body;
-  console.log(update);
-
-  const keys = Object.keys(update);
-  keys.forEach((key) => {
-    if (!toUpdate[key]) {
-      return res.status(400).json({ error: `Missing key: ${key}` });
-    }
-    toUpdate[key] = update[key];
+  app.listen(port, () => {
+    console.log(`Serwer nasłuchuje na porcie: ${port}`);
   });
-
-  BOOKS[1] = toUpdate;
-  return res
-    .status(200)
-    .json({ message: "Book updated successfully", book: toUpdate });
-});
-
-app.delete("/deleteAllBooks", (req, res) => {
-  res.status(200).json({ message: "Wszystko usunięto pomyślnie" });
-  console.log(BOOKS);
-});
-
-app.delete("/deleteAllGenreBooks/:genre", (req, res) => {
-  BOOKS = BOOKS.filter((book) => {
-    return book.genre != req.params.genre;
-  });
-  res.status(200).json({
-    message: `Usunięto wszystkie książki z kategorii ${req.params.genre}`,
-  });
-});
-
-app.listen(process.env.PORT, () =>
-  console.log(`Example app listening on port ${process.env.PORT}!`)
-);
+} catch (err) {
+  console.error(`Błąd w pobieraniu pliku konfiguracyjnego: ${err.message}`);
+  process.exit(1);
+}

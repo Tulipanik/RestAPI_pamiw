@@ -1,7 +1,3 @@
 {
-    "endpoints": [
-        {
-            "path": "api/get"
-        }
-    ]
-}
+    "port": 8080
+  }

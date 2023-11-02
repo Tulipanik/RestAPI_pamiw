@@ -1,20 +1,19 @@
 const { fakerPL } = require("@faker-js/faker");
+const Book = require("../Shared/Book.js");
 
 fakerPL.seed(1234);
 
-class Book {
-  constructor() {
-    this.title = fakerPL.music.songName();
-    this.author = fakerPL.person.fullName();
-    this.genre = fakerPL.music.genre();
-    this.releaseDate = fakerPL.date.past();
-  }
+function createBook() {
+  const title = fakerPL.music.songName();
+  const author = fakerPL.person.fullName();
+  const genre = fakerPL.music.genre();
+  const releaseDate = fakerPL.date.past();
+
+  return new Book(title, author, genre, releaseDate);
 }
 
-function createBook() {
-  return new Book();
-}
+console.log(createBook());
 
 let BOOKS = Array.from({ length: 50 }, () => createBook());
 
-module.exports = { BOOKS, Book };
+module.exports = BOOKS;
