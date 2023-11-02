@@ -3,11 +3,7 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const fs = require("fs");
 const bookRoutes = require("./LibraryAPI/Controllers/LibraryController.js");
-const { sequelize } = require("./Database/startBase.js");
-
-sequelize.sync().then(() => {
-  console.log("Database synchronization successful");
-});
+const establishConnection = require("./Database/startBase.js");
 
 dotenv.config();
 const app = express();

@@ -12,8 +12,6 @@ function createBook() {
   return new Book(title, author, genre, releaseDate);
 }
 
-console.log(createBook());
-
 let BOOKS = Array.from({ length: 50 }, () => createBook());
 
 module.exports = BOOKS;

@@ -1,10 +1,8 @@
 const express = require("express");
 let BOOKS = require("../../DataSeeder/BookSeeder.js");
-const getAllBooks = require("../../Database/DatabaseOperation.js");
 const router = express.Router();
 
 router.get("/getAllBooks", (req, res) => {
-  console.log(getAllBooks());
   return res.status(200).json(BOOKS);
 });
 

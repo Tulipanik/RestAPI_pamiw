@@ -1,13 +1,14 @@
-const Books = require("./startBase.js");
+const BookModel = require("./Model/BookModel.js");
+const BOOKS = require("../DataSeeder/BookSeeder.js");
 
-function getAllBooks() {
-  Books.findAll()
-    .then((books) => {
-      console.log(users);
-    })
-    .catch((err) => {
-      console.error("Something's wrong");
-    });
+BookModel.bulkCreate(BOOKS);
+
+async function getAllBooks() {
+  const books = await BookModel.findAll();
+
+  console.log(JSON.stringify(books, null, 2));
 }
+
+getAllBooks();
 
 module.exports = getAllBooks;
