@@ -1,35 +1,41 @@
 const express = require("express");
 let BOOKS = require("../../DataSeeder/BookSeeder.js");
+const operations = require("../../Database/DatabaseOperation.js");
 const router = express.Router();
 
-router.get("/getAllBooks", (req, res) => {
-  return res.status(200).json(BOOKS);
+const endpoints = require("../../config/endpoints.json").endpoints;
+
+router.get(endpoints.getAll, (req, res) => {
+  operations.getAllBooks().then((data) => {
+    return res.status(200).json(data);
+  });
 });
 
-router.get("/getBookByGenre/:genre", (req, res) => {
-  return res.status(200).json(
-    BOOKS.filter((book) => {
-      return book.genre == req.params.genre;
-    })
-  );
+router.get(endpoints.getAllGenre, (req, res) => {
+  operations.getAllGenreBooks(req.params.genre).then((data) => {
+    return res.status(200).json(data);
+  });
 });
 
-router.get("/getBookByAuthor/:author", (req, res) => {
-  return res.json(
-    BOOKS.filter((item) => {
-      return item.author == req.params.author;
-    })
-  );
+router.get(endpoints.getAllAuthor, (req, res) => {
+  operations.getAllAuthorBooks(req.params.author).then((data) => {
+    return res.status(200).json(data);
+  });
 });
 
-router.post("/addBook", (req, res) => {
+router.post(endpoints.add, (req, res) => {
   let toAdd = req.body;
-
-  BOOKS.push(toAdd);
-  res.send("Dodano do bazy");
+  operations
+    .addBook(toAdd)
+    .then(() => {
+      res.status(201).json({ message: "Udało się dodać do bazy" });
+    })
+    .catch((err) => {
+      res.status(500).json({ message: "Błąd podczas dodawania do bazy" });
+    });
 });
 
-router.put("/updateBook/:id", (req, res) => {
+router.put(endpoints.update, (req, res) => {
   const bookId = Number(req.params.id);
   const toUpdate = BOOKS[bookId];
 
@@ -51,11 +57,13 @@ router.put("/updateBook/:id", (req, res) => {
   return res.status(200).json({ message: "Książka uaktualniona pomyślnie" });
 });
 
-router.delete("/deleteAllBooks", (req, res) => {
-  res.status(200).json({ message: "Wszystko usunięto pomyślnie" });
+router.delete(endpoints.deleteAll, (req, res) => {
+  operations.deleteAllBooks().then(() => {
+    res.status(200).json({ message: "Wszystko usunięto pomyślnie" });
+  });
 });
 
-router.delete("/deleteAllGenreBooks/:genre", (req, res) => {
+router.delete(endpoints.deleteAllGenre, (req, res) => {
   BOOKS = BOOKS.filter((book) => {
     return book.genre != req.params.genre;
   });

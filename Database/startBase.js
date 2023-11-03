@@ -7,6 +7,7 @@ const dbConfig = config[environment];
 
 const sequelize = new Sequelize(dbConfig);
 module.exports = sequelize;
+const APIConnection = require("../LibraryAPI/APIStart.js");
 
 sequelize
   .authenticate()
@@ -23,5 +24,6 @@ sequelize.sync().then(() => {
   Books.sync().then(() => {
     console.log(Books === sequelize.models.Book);
     const operations = require("./DatabaseOperation.js");
+    APIConnection();
   });
 });
