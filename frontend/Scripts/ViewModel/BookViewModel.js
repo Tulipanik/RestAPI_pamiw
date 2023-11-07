@@ -1,4 +1,3 @@
-import { BookModel } from "../Models/BookModel.js";
 import { getAllBooks } from "../Services/AccuWeatherService.js";
 
 export class BookViewModel {
@@ -6,7 +5,7 @@ export class BookViewModel {
     var self = this;
 
     self.array = ko.observableArray("");
-    getAllBooks(1, 20);
+    getAllBooks(1, 10);
   }
 
   set(array) {

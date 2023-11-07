@@ -71,10 +71,11 @@ table {
 
 thead {
   background-color: #bd2619;
+  color: white;
 }
 
 td {
-  border: 2px solid white;
+  border: 2px solid grey;
   padding: 10px;
 }
 
@@ -93,8 +94,22 @@ button {
 }
 
 #left {
+  height: 100vh;
   width: 30vw;
   background-color: #bd2619;
+}
+
+#left h3 {
+  color: white;
+}
+
+#left button:hover {
+  background-color: #6b1c15;
+}
+
+#left div div {
+  background-color: #6b1c15;
+  padding: 5px;
 }
 
 #right {
@@ -102,5 +117,28 @@ button {
 }
 
 #search_menu {
+  display: none;
+}
+
+#control {
+  display: flex;
+  width: 100%;
+  justify-content: center;
+}
+#control button {
+  display: inline-block;
+  background-color: #bd2619;
+}
+
+#get_genre_error,
+#get_author_error,
+#get_id_error,
+#not_added,
+#null_title,
+#null_id,
+#null_title_2,
+#not_deleted,
+#delete_id_error,
+#delete_genre_error {
   display: none;
 }

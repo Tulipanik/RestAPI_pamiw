@@ -22,6 +22,9 @@
                   <label for="genre_find">Gatunek:</label>
                   <input type="text" name="genre_find" id="genre_find" />
                   <button type="submit">Wyszukaj</button>
+                  <div class="error" id="get_genre_error">
+                    Nie ma książki o takim gatunku
+                  </div>
                 </form>
               </div>
               <div id="get_author_form">
@@ -30,6 +33,9 @@
                   <label for="author_find">Autor:</label>
                   <input type="text" name="author_find" id="author_find" />
                   <button type="submit">Wyszukaj</button>
+                  <div class="error" id="get_author_error">
+                    Nie ma książki z takim autorem
+                  </div>
                 </form>
               </div>
               <div id="get_id_form">
@@ -38,6 +44,9 @@
                   <label for="id_find">Id:</label>
                   <input type="text" name="id_find" id="id_find" />
                   <button type="submit">Wyszukaj</button>
+                  <div class="error" id="get_id_error">
+                    Nie ma książki o takim id
+                  </div>
                 </form>
               </div>
             </div>
@@ -56,6 +65,12 @@
                   <label for="genre">Gatunek:</label>
                   <input type="text" name="genre" />
                   <button type="submit">Dodaj</button>
+                  <div class="error" id="null_title">
+                    Tytuł nie może być pusty
+                  </div>
+                  <div class="error" id="not_added">
+                    Nie udało się dodać książki do bazy
+                  </div>
                 </form>
               </div>
               <div id="update_form">
@@ -70,28 +85,43 @@
                   <label for="genre">Gatunek:</label>
                   <input type="text" name="genre" />
                   <button type="submit">Aktualizuj</button>
+                  <div class="error" id="null_id">
+                    Nie istnieje takie id w bazie
+                  </div>
+                  <div class="error" id="null_title_2">
+                    Tytuł nie może być pusty
+                  </div>
                 </form>
               </div>
             </div>
             <button data-bind="click: search('delete_menu')">Delete</button>
             <div id="delete_menu">
               <button data-bind="click: deleteAllBooks">
-                Delete All Books
+                Usuń wszystkie książki
               </button>
+              <div class="error" id="not_deleted">
+                Nie udało się usunąć wszystkich książek
+              </div>
               <div id="delete_id_form">
                 <h3>Delete by chosen id</h3>
                 <form data-bind="submit: deleteId">
                   <label for="id">Id:</label>
                   <input type="text" name="id" id="id" />
                   <button type="submit">Usuń</button>
+                  <div class="error" id="delete_id_error">
+                    Nie ma książki o takim id
+                  </div>
                 </form>
               </div>
               <div id="delete_genre_form">
                 <h3>Delete by chosen genre</h3>
                 <form data-bind="submit: deleteAllGenre">
-                  <label for="genre">Gatunek:</label>
-                  <input type="text" name="genre" id="genre" />
+                  <label for="genre_delete">Gatunek:</label>
+                  <input type="text" name="genre" id="genre_delete" />
                   <button type="submit">Usuń</button>
+                  <div class="error" id="delete_genre_error">
+                    Nie ma książki o takim gatunku
+                  </div>
                 </form>
               </div>
             </div>

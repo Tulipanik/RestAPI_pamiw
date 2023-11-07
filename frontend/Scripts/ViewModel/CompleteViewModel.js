@@ -4,11 +4,13 @@ import { BookViewModel } from "./BookViewModel.js";
 export let combinedViewModel = {};
 let maxId;
 let page = 1;
-const perPage = 20;
+const perPage = 10;
 
 class CompleteViewModel {
   constructor() {
     var self = this;
+
+    self.bookVM = new BookViewModel();
 
     self.back = () => {
       if (page - perPage < 1) {
@@ -21,7 +23,10 @@ class CompleteViewModel {
     };
 
     self.next = () => {
-      if (page + perPage > api.getMax()) {
+      if (maxId === undefined) {
+        maxId = api.getMax();
+      }
+      if (page + perPage > maxId) {
         page = page;
       } else {
         page += perPage;
@@ -60,8 +65,6 @@ class CompleteViewModel {
       maxId += 1;
       formData["id"] = maxId;
 
-      console.log(formData);
-
       api.add(formData);
     };
 
@@ -70,21 +73,24 @@ class CompleteViewModel {
         document.getElementById("update").elements
       );
 
-      console.log(formData);
       api.update(formData);
     };
 
     self.deleteAllBooks = () => {
       api.deleteAll();
+      maxId = 0;
     };
 
     self.deleteId = () => {
       api.deleteId(document.getElementById("id").value);
+      maxId -= 1;
     };
 
-    self.deleteAllGenre = () => {};
+    self.deleteAllGenre = () => {
+      api.deleteGenre(document.getElementById("genre_delete").value);
+    };
 
-    self.bookVM = new BookViewModel();
+    api;
   }
 
   getBookVM() {
