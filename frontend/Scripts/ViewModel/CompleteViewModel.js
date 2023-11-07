@@ -3,10 +3,32 @@ import { BookViewModel } from "./BookViewModel.js";
 
 export let combinedViewModel = {};
 let maxId;
+let page = 1;
+const perPage = 20;
 
 class CompleteViewModel {
   constructor() {
     var self = this;
+
+    self.back = () => {
+      if (page - perPage < 1) {
+        page = 1;
+      } else {
+        page -= perPage;
+      }
+
+      api.getAllBooks(page, perPage);
+    };
+
+    self.next = () => {
+      if (page + perPage > api.getMax()) {
+        page = page;
+      } else {
+        page += perPage;
+      }
+
+      api.getAllBooks(page, perPage);
+    };
 
     self.search = (id) => {
       let element = document.getElementById(id);

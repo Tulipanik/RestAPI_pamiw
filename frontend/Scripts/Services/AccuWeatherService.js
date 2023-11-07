@@ -18,13 +18,15 @@ async function getAPIRequest(endpoint, metadata) {
   });
 }
 
-export async function getAllBooks() {
-  getAPIRequest(`${URL}getAllBooks`, {}).then((Books) => {
-    const books = Books.map((book) => {
-      return new BookModel(book);
-    });
-    combinedViewModel.getBookVM().set(books);
-  });
+export async function getAllBooks(page, perPage) {
+  getAPIRequest(`${URL}getAllBooks?perpage=${perPage}&page=${page}`, {}).then(
+    (Books) => {
+      const books = Books.map((book) => {
+        return new BookModel(book);
+      });
+      combinedViewModel.getBookVM().set(books);
+    }
+  );
 }
 
 export async function getAllGenre(genre) {
@@ -84,7 +86,6 @@ export async function add(book) {
 }
 
 export async function update(book) {
-  
   const endpoint = `${URL}updateBook/${book.id}`;
 
   console.log(endpoint);

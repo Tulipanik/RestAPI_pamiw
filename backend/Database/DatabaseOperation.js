@@ -1,18 +1,28 @@
+const Sequelize = require("sequelize");
 const BookModel = require("./Model/BookModel.js");
 const BOOKS = require("../DataSeeder/BookSeeder.js");
 
 // BookModel.bulkCreate(BOOKS);
 
-async function getAllBooks() {
-  const books = await BookModel.findAll();
+async function getAllBooks(fromId, toId) {
+  const books = await BookModel.findAll({
+    where: {
+      id: {
+        [Sequelize.Op.between]: [fromId, toId],
+      },
+    },
+  });
 
   return books;
 }
 
-async function getAllGenreBooks(bookGenre) {
+async function getAllGenreBooks(bookGenre, fromId, toId) {
   const books = await BookModel.findAll({
     where: {
       ["genre"]: bookGenre,
+      id: {
+        [Sequelize.Op.between]: [fromId, toId],
+      },
     },
   });
   return books;
@@ -22,6 +32,9 @@ async function getAllAuthorBooks(bookAuthor) {
   const books = await BookModel.findAll({
     where: {
       ["author"]: bookAuthor,
+      id: {
+        [Sequelize.Op.between]: [fromId, toId],
+      },
     },
   });
   return books;

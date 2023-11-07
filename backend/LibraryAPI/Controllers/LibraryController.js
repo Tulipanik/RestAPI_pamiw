@@ -1,26 +1,47 @@
 const express = require("express");
-let BOOKS = require("../../DataSeeder/BookSeeder.js");
 const operations = require("../../Database/DatabaseOperation.js");
 const router = express.Router();
 
 const endpoints = require("../../config/endpoints.json").endpoints;
 
 router.get(endpoints.getAll, (req, res) => {
-  operations.getAllBooks().then((data) => {
+  const perPage = parseInt(req.query.perpage) || 50;
+  const page = parseInt(req.query.page) || 1;
+
+  const startIndex = page;
+  const endIndex = startIndex + perPage - 1;
+
+  operations.getAllBooks(startIndex, endIndex).then((data) => {
     return res.status(200).json(data);
   });
 });
 
 router.get(endpoints.getAllGenre, (req, res) => {
-  operations.getAllGenreBooks(req.params.genre).then((data) => {
-    return res.status(200).json(data);
-  });
+  const perPage = parseInt(req.query.perpage) || 50;
+  const page = parseInt(req.query.page) || 1;
+
+  const startIndex = (page - 1) * perPage;
+  const endIndex = startIndex + perPage;
+
+  operations
+    .getAllGenreBooks(req.params.genre, startIndex, endIndex)
+    .then((data) => {
+      return res.status(200).json(data);
+    });
 });
 
 router.get(endpoints.getAllAuthor, (req, res) => {
-  operations.getAllAuthorBooks(req.params.author).then((data) => {
-    return res.status(200).json(data);
-  });
+  const perPage = parseInt(req.query.perpage) || 50;
+  const page = parseInt(req.query.page) || 1;
+
+  const startIndex = (page - 1) * perPage;
+  const endIndex = startIndex + perPage;
+
+  operations
+    .getAllAuthorBooks(req.params.author, startIndex, endIndex)
+    .then((data) => {
+      return res.status(200).json(data);
+    });
 });
 
 router.get(endpoints.getId, (req, res) => {

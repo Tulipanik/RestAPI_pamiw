@@ -6,12 +6,11 @@ export class BookViewModel {
     var self = this;
 
     self.array = ko.observableArray("");
-    getAllBooks();
+    getAllBooks(1, 20);
   }
 
   set(array) {
     this.array(array);
-    getAllBooks();
   }
 
   get() {
