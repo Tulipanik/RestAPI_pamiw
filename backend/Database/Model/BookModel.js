@@ -2,6 +2,12 @@ const { DataTypes } = require("sequelize");
 const sequelize = require("../startBase.js");
 
 const BookModel = sequelize.define("Book", {
+  id: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    unique: true,
+    primaryKey: true,
+  },
   title: {
     type: DataTypes.STRING,
     allowNull: false,

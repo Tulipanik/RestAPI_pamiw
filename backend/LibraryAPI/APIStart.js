@@ -27,6 +27,7 @@ const APIConnection = function () {
       extended: true,
     })
   );
+
   app.use(bodyParser.json());
   app.use("", bookRoutes);
 };

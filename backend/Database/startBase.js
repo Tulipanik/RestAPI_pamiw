@@ -21,6 +21,7 @@ sequelize
 sequelize.sync().then(() => {
   console.log("Database synchronization successful");
   const Books = require("./Model/BookModel.js");
+  console.log(Books);
   Books.sync().then(() => {
     console.log(Books === sequelize.models.Book);
     const operations = require("./DatabaseOperation.js");

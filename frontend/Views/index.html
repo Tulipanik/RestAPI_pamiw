@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="../Styles/css.css" />
+    <title>Weather Cast</title>
+  </head>
+  <body>
+    <div id="knockout-app">
+      <h1>Books app</h1>
+      <div id="to_float">
+        <div id="left">
+          <div>
+            <button data-bind="click: search('search_menu')">
+              Wyszukiwanie
+            </button>
+            <div id="search_menu">
+              <div id="get_genre_form">
+                <form data-bind="submit: getAllGenre">
+                  <label for="genre_find">Gatunek:</label>
+                  <input type="text" name="genre_find" id="genre_find" />
+                  <button type="submit">Wyszukaj</button>
+                </form>
+              </div>
+              <div id="get_author_form">
+                <form data-bind="submit: getAllAuthor">
+                  <label for="author_find">Autor:</label>
+                  <input type="text" name="author_find" id="author_find" />
+                  <button type="submit">Wyszukaj</button>
+                </form>
+              </div>
+              <div id="get_id_form">
+                <form data-bind="submit: getById">
+                  <label for="id_find">Id:</label>
+                  <input type="text" name="id_find" id="id_find" />
+                  <button type="submit">Wyszukaj</button>
+                </form>
+              </div>
+            </div>
+
+            <button data-bind="click: search('modify_menu')">
+              Menu edycji
+            </button>
+            <div id="modify_menu">
+              <div id="add_form">
+                <form id="add" data-bind="submit: addBook">
+                  <label for="title">Tytuł:</label>
+                  <input type="text" name="title" />
+                  <label for="author">Autor:</label>
+                  <input type="text" name="author" />
+                  <label for="genre">Gatunek:</label>
+                  <input type="text" name="genre" />
+                  <button type="submit">Dodaj</button>
+                </form>
+              </div>
+              <div id="update_form">
+                <form id="update" data-bind="submit: updateBook">
+                  <label for="id">Id:</label>
+                  <input type="text" name="id" />
+                  <label for="title">Tytuł:</label>
+                  <input type="text" name="title" />
+                  <label for="author">Autor:</label>
+                  <input type="text" name="author" />
+                  <label for="genre">Gatunek:</label>
+                  <input type="text" name="genre" />
+                  <button type="submit">Aktualizuj</button>
+                </form>
+              </div>
+            </div>
+            <button data-bind="click: search('delete_menu')">Delete</button>
+            <div id="delete_menu">
+              <button data-bind="click: deleteAllBooks">
+                Delete All Books
+              </button>
+              <div id="delete_id_form">
+                <form data-bind="submit: deleteId">
+                  <label for="id">Id:</label>
+                  <input type="text" name="id" id="id" />
+                  <button type="submit">Usuń</button>
+                </form>
+              </div>
+              <div id="delete_genre_form">
+                <form data-bind="submit: deleteAllGenre">
+                  <label for="genre">Gatunek:</label>
+                  <input type="text" name="genre" id="genre" />
+                  <button type="submit">Usuń</button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="right">
+          <table>
+            <thead></thead>
+            <tbody data-bind="foreach: bookVM.get()">
+              <td data-bind="text: id"></td>
+              <td data-bind="text: title"></td>
+              <td data-bind="text: author"></td>
+              <td data-bind="text: genre"></td>
+            </tbody>
+          </table>
+        </div>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.5.1/knockout-latest.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+        <script
+          type="module"
+          src="../Scripts/ViewModel/CompleteViewModel.js"
+        ></script>
+      </div>
+    </div>
+  </body>
+</html>

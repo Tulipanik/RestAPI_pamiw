@@ -23,6 +23,18 @@ router.get(endpoints.getAllAuthor, (req, res) => {
   });
 });
 
+router.get(endpoints.getId, (req, res) => {
+  operations.getIdBook(req.params.id).then((data) => {
+    return res.status(200).json(data);
+  });
+});
+
+router.get(endpoints.maxId, (req, res) => {
+  operations.getMaxId().then((value) => {
+    res.status(200).json({ max: value });
+  });
+});
+
 router.post(endpoints.add, (req, res) => {
   let toAdd = req.body;
   operations
@@ -36,25 +48,9 @@ router.post(endpoints.add, (req, res) => {
 });
 
 router.put(endpoints.update, (req, res) => {
-  const bookId = Number(req.params.id);
-  const toUpdate = BOOKS[bookId];
-
-  if (bookId >= BOOKS.length) {
-    return res.status(404).json({ error: "Nie znaleziono ksiązki" });
-  }
-
-  const update = req.body;
-
-  const keys = Object.keys(update);
-  keys.forEach((key) => {
-    if (!toUpdate[key]) {
-      return res.status(400).json({ error: `Brakujący klucz: ${key}` });
-    }
-    toUpdate[key] = update[key];
+  operations.updateBook(req.body).then(() => {
+    res.status(200).json({ message: "Zaktualizowano pomyślnie" });
   });
-
-  BOOKS[1] = toUpdate;
-  return res.status(200).json({ message: "Książka uaktualniona pomyślnie" });
 });
 
 router.delete(endpoints.deleteAll, (req, res) => {
@@ -63,12 +59,17 @@ router.delete(endpoints.deleteAll, (req, res) => {
   });
 });
 
-router.delete(endpoints.deleteAllGenre, (req, res) => {
-  BOOKS = BOOKS.filter((book) => {
-    return book.genre != req.params.genre;
+router.delete(endpoints.deleteAllId, (req, res) => {
+  operations.deleteById(req.params.id).then(() => {
+    res.status(200).json({ message: "Usunięto pomyślnie" });
   });
-  res.status(200).json({
-    message: `Usunięto wszystkie książki z kategorii ${req.params.genre}`,
+});
+
+router.delete(endpoints.deleteAllGenre, (req, res) => {
+  operations.deleteAllBooksByGenre(req.params.genre).then(() => {
+    res.status(200).json({
+      message: `Pomyślnie usunięto wszytskie książki z gatunku ${req.params.genre}`,
+    });
   });
 });
 
