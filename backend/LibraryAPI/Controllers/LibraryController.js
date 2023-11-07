@@ -70,7 +70,9 @@ router.post(endpoints.add, (req, res) => {
       res.status(201).json({ message: "Udało się dodać do bazy" });
     })
     .catch((err) => {
+      console.log("Welcome");
       if ((toAdd.title = "")) {
+        console.log("hello");
         res.status(501).json({ message: "Błąd tytułu" });
       }
       res.status(500).json({ message: "Błąd podczas dodawania do bazy" });
@@ -87,7 +89,7 @@ router.put(endpoints.update, (req, res) => {
       if ((toAdd.title = "")) {
         res.status(501).json({ message: "Błąd tytułu" });
       }
-      res.status(500).json({ message: "Błąd podczas dodawania do bazy" });
+      res.status(502).json({ message: "Błąd podczas dodawania do bazy" });
     });
 });
 
@@ -114,16 +116,16 @@ router.delete(endpoints.deleteAllId, (req, res) => {
 });
 
 router.delete(endpoints.deleteAllGenre, (req, res) => {
-  operations.deleteAllBooksByGenre(req.params.genre).then(() => {
-    res
-      .status(200)
-      .json({
+  operations
+    .deleteAllBooksByGenre(req.params.genre)
+    .then(() => {
+      res.status(200).json({
         message: `Pomyślnie usunięto wszytskie książki z gatunku ${req.params.genre}`,
-      })
-      .catch((err) => {
-        res.status(501).json({ message: "Błąd gatunku" });
       });
-  });
+    })
+    .catch((err) => {
+      res.status(501).json({ message: "Błąd gatunku" });
+    });
 });
 
 module.exports = router;

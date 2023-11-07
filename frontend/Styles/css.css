@@ -142,3 +142,8 @@ button {
 #delete_genre_error {
   display: none;
 }
+
+.error {
+  border: solid 2px #bd2619;
+  color: #bd2619;
+}

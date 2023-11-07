@@ -95,24 +95,27 @@ export async function add(book) {
   let errorMessage = document.getElementById("null_title");
   let errorMessage2 = document.getElementById("not_added");
 
-  await getAPIRequest(endpoint, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(book),
-  })
-    .then((response) => {
-      errorMessage.style.display = "none";
-      errorMessage2.style.display = "none";
-    })
-    .catch((error) => {
-      if (error.message == 501) {
+  try {
+    const response = await getAPIRequest(endpoint, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(book),
+    });
+
+    errorMessage.style.display = "none";
+    errorMessage2.style.display = "none";
+    if (!response.ok) {
+      if (response.status === 501) {
         errorMessage.style.display = "block";
       } else {
         errorMessage2.style.display = "block";
       }
-    });
+    }
+  } catch (error) {
+    return;
+  }
 }
 
 export async function update(book) {
@@ -120,24 +123,30 @@ export async function update(book) {
   let errorMessage = document.getElementById("null_title_2");
   let errorMessage2 = document.getElementById("null_id");
 
-  await getAPIRequest(endpoint, {
-    method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(book),
-  })
-    .then((response) => {
+  try {
+    const response = await getAPIRequest(endpoint, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(book),
+    });
+
+    console.log("hello");
+    errorMessage.style.display = "none";
+    errorMessage2.style.display = "none";
+    if (response.ok) {
+      console.log("hello");
       errorMessage.style.display = "none";
       errorMessage2.style.display = "none";
-    })
-    .catch((error) => {
-      if (error.message == 501) {
+    } else {
+      if (response.status === 501) {
         errorMessage.style.display = "block";
       } else {
         errorMessage2.style.display = "block";
       }
-    });
+    }
+  } catch (error) {}
 }
 
 export async function deleteAll() {
@@ -154,27 +163,43 @@ export async function deleteAll() {
 }
 
 export async function deleteId(id) {
-  const endpointDailyForecast = `${URL}deleteBookById/${id}`;
+  if (id == "") {
+    id = 0;
+  }
+
+  const endpoint = `${URL}deleteBookById/${id}`;
   let errorMessage = document.getElementById("delete_id_error");
 
-  await getAPIRequest(endpointDailyForecast, { method: "DELETE" })
-    .then((message) => {
-      errorMessage.style.display = "none";
-    })
-    .catch((err) => {
-      errorMessage.style.display = "block";
+  try {
+    const response = await getAPIRequest(endpoint, {
+      method: "DELETE",
     });
+
+    errorMessage.style.display = "none";
+
+    if (response.ok) {
+      errorMessage.style.display = "none";
+    } else {
+      errorMessage.style.display = "block";
+    }
+  } catch (err) {}
 }
 
 export async function deleteGenre(genre) {
   const endpointDailyForecast = `${URL}/deleteAllBooksByGenre/${genre}`;
   let errorMessage = document.getElementById("delete_genre_error");
 
-  await getAPIRequest(endpointDailyForecast, { method: "DELETE" })
-    .then((message) => {
-      errorMessage.style.display = "none";
-    })
-    .catch((err) => {
-      errorMessage.style.display = "block";
+  try {
+    const response = await getAPIRequest(endpointDailyForecast, {
+      method: "DELETE",
     });
+
+    errorMessage.style.display = "none";
+
+    if (response.ok) {
+      errorMessage.style.display = "none";
+    } else {
+      errorMessage.style.display = "block";
+    }
+  } catch (err) {}
 }

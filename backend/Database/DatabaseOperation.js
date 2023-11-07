@@ -2,7 +2,21 @@ const Sequelize = require("sequelize");
 const BookModel = require("./Model/BookModel.js");
 const BOOKS = require("../DataSeeder/BookSeeder.js");
 
-//BookModel.bulkCreate(BOOKS);
+async function createBooks() {
+  try {
+    const createdBooks = await BookModel.bulkCreate(BOOKS);
+    console.log("Utworzone rekordy", createdBooks);
+  } catch (err) {
+    console.error("Błąd tworzenia rekordu:", err);
+
+    if (err.name === "SequelizeValidationError") {
+      console.error("Błąd walidacji:", err.errors);
+    } else {
+    }
+  }
+}
+
+createBooks();
 
 async function getAllBooks(fromId, toId) {
   const books = await BookModel.findAll({

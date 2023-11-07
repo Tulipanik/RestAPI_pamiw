@@ -66,6 +66,7 @@ class CompleteViewModel {
       formData["id"] = maxId;
 
       api.add(formData);
+      api.getAllBooks(page, perPage);
     };
 
     self.updateBook = () => {
@@ -74,20 +75,24 @@ class CompleteViewModel {
       );
 
       api.update(formData);
+      api.getAllBooks(page, perPage);
     };
 
     self.deleteAllBooks = () => {
       api.deleteAll();
       maxId = 0;
+      api.getAllBooks(page, perPage);
     };
 
     self.deleteId = () => {
       api.deleteId(document.getElementById("id").value);
       maxId -= 1;
+      api.getAllBooks(page, perPage);
     };
 
     self.deleteAllGenre = () => {
       api.deleteGenre(document.getElementById("genre_delete").value);
+      api.getAllBooks(page, perPage);
     };
 
     api;
