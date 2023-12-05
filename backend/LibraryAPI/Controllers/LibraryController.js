@@ -1,10 +1,77 @@
 const express = require("express");
+const dotenv = require("dotenv");
+const jwt = require("jsonwebtoken");
 const operations = require("../../Database/DatabaseOperation.js");
 const router = express.Router();
 
-const endpoints = require("../../config/endpoints.json").endpoints;
+dotenv.config();
 
-router.get(endpoints.getAll, (req, res) => {
+const endpoints = require("../../config/endpoints.json").endpoints;
+const secretKey = process.env.SECRET;
+
+router.post(endpoints.login, (req, res) => {
+  const { username, password } = req.body;
+  if (username == undefined || password == undefined) {
+    res.status(401).json({ message: "Invalid username or password" });
+    return;
+  }
+
+  operations
+    .getUser(username)
+    .then((user) => {
+      if (user.length != 0 && user[0].password == password) {
+        const token = jwt.sign(user[0].dataValues, secretKey);
+        res.json({ token: token });
+      } else {
+        res.status(401).json({ message: "Invalid username or password" });
+      }
+    })
+    .catch(() => {
+      res.status(401).json({ message: "Invalid username or password" });
+    });
+});
+
+router.post(endpoints.register, (req, res) => {
+  const { username, password } = req.body;
+  const user = {
+    username: username,
+    password: password,
+    role: "user",
+  };
+
+  operations
+    .setUser(user)
+    .then(() => {
+      res.status(200).json({ message: "Registered" });
+    })
+    .catch(() => {
+      res.status(401).json({ message: "cannot register" });
+    });
+});
+
+const authorize = (requiredRoles) => (req, res, next) => {
+  const authHeader = req.headers.authorization;
+
+  if (authHeader) {
+    const token = authHeader.split(" ")[1];
+
+    try {
+      const decodedToken = jwt.verify(token, secretKey);
+      if (!requiredRoles.includes(decodedToken.role)) {
+        res.status(401).json({ message: "Wrong privilages" });
+        return;
+      }
+      next();
+    } catch (error) {
+      console.log(error);
+      res.status(401).json({ message: "Invalid token" });
+    }
+  } else {
+    res.status(401).json({ message: "Unauthorized" });
+  }
+};
+
+router.get(endpoints.getAll, authorize(["admin", "user"]), (req, res) => {
   const perPage = parseInt(req.query.perpage) || 50;
   const page = parseInt(req.query.page) || 1;
 
@@ -16,7 +83,7 @@ router.get(endpoints.getAll, (req, res) => {
   });
 });
 
-router.get(endpoints.getAllGenre, (req, res) => {
+router.get(endpoints.getAllGenre, authorize(["admin", "user"]), (req, res) => {
   const perPage = parseInt(req.query.perpage) || 50;
   const page = parseInt(req.query.page) || 1;
 
@@ -30,7 +97,7 @@ router.get(endpoints.getAllGenre, (req, res) => {
     });
 });
 
-router.get(endpoints.getAllAuthor, (req, res) => {
+router.get(endpoints.getAllAuthor, authorize(["admin", "user"]), (req, res) => {
   const perPage = parseInt(req.query.perpage) || 50;
   const page = parseInt(req.query.page) || 1;
 
@@ -44,7 +111,7 @@ router.get(endpoints.getAllAuthor, (req, res) => {
     });
 });
 
-router.get(endpoints.getId, (req, res) => {
+router.get(endpoints.getId, authorize(["admin", "user"]), (req, res) => {
   operations
     .getIdBook(req.params.id)
     .then((data) => {
@@ -55,13 +122,13 @@ router.get(endpoints.getId, (req, res) => {
     });
 });
 
-router.get(endpoints.maxId, (req, res) => {
+router.get(endpoints.maxId, authorize(["admin", "user"]), (req, res) => {
   operations.getMaxId().then((value) => {
     res.status(200).json({ max: value });
   });
 });
 
-router.post(endpoints.add, (req, res) => {
+router.post(endpoints.add, authorize(["admin", "user"]), (req, res) => {
   let toAdd = req.body;
   console.log(toAdd);
   operations
@@ -70,30 +137,29 @@ router.post(endpoints.add, (req, res) => {
       res.status(201).json({ message: "Udało się dodać do bazy" });
     })
     .catch((err) => {
-      console.log("Welcome");
-      if ((toAdd.title = "")) {
-        console.log("hello");
+      if ((req.body.title = "")) {
         res.status(501).json({ message: "Błąd tytułu" });
       }
       res.status(500).json({ message: "Błąd podczas dodawania do bazy" });
     });
 });
 
-router.put(endpoints.update, (req, res) => {
+router.put(endpoints.update, authorize(["admin", "user"]), (req, res) => {
   operations
     .updateBook(req.body)
     .then(() => {
       res.status(200).json({ message: "Zaktualizowano pomyślnie" });
     })
     .catch((err) => {
-      if ((toAdd.title = "")) {
+      if ((req.body.title = "")) {
         res.status(501).json({ message: "Błąd tytułu" });
       }
       res.status(502).json({ message: "Błąd podczas dodawania do bazy" });
     });
 });
 
-router.delete(endpoints.deleteAll, (req, res) => {
+router.delete(endpoints.deleteAll, authorize(["admin"]), (req, res) => {
+  console.log("Siema");
   operations
     .deleteAllBooks()
     .then(() => {
@@ -104,7 +170,7 @@ router.delete(endpoints.deleteAll, (req, res) => {
     });
 });
 
-router.delete(endpoints.deleteAllId, (req, res) => {
+router.delete(endpoints.deleteAllId, authorize(["admin"]), (req, res) => {
   operations
     .deleteById(req.params.id)
     .then(() => {
@@ -115,7 +181,10 @@ router.delete(endpoints.deleteAllId, (req, res) => {
     });
 });
 
-router.delete(endpoints.deleteAllGenre, (req, res) => {
+router.delete(endpoints.deleteAllGenre, authorize(["admin"]), (req, res) => {
+  const roles = res.locals.decodedToken.roles || [];
+  console.log(roles);
+
   operations
     .deleteAllBooksByGenre(req.params.genre)
     .then(() => {

@@ -21,10 +21,15 @@ sequelize
 sequelize.sync().then(() => {
   console.log("Database synchronization successful");
   const Books = require("./Model/BookModel.js");
+  const User = require("./Model/UserModel.js");
   console.log(Books);
   Books.sync().then(() => {
     console.log(Books === sequelize.models.Book);
-    const operations = require("./DatabaseOperation.js");
-    APIConnection();
+    User.sync().then(() => {
+      console.log(User === sequelize.models.User);
+      const operations = require("./DatabaseOperation.js");
+      APIConnection();
+    });
   });
+  
 });

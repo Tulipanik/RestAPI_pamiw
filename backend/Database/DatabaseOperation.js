@@ -1,5 +1,6 @@
 const Sequelize = require("sequelize");
 const BookModel = require("./Model/BookModel.js");
+const UserModel = require("./Model/UserModel.js");
 const BOOKS = require("../DataSeeder/BookSeeder.js");
 
 async function createBooks() {
@@ -16,7 +17,45 @@ async function createBooks() {
   }
 }
 
+async function createUser() {
+  try {
+    const usersToAdd = [
+      { id: 0, username: "siema", password: "elo", role: "admin" },
+      { id: 1, username: "zwykly", password: "user", role: "user" },
+    ];
+    const createdUsers = await UserModel.bulkCreate(usersToAdd);
+
+    console.log("Utworzone rekordy", createdUsers);
+  } catch (err) {
+    console.error("Błąd tworzenia rekordu:", err);
+
+    if (err.name === "SequelizeValidationError") {
+      console.error("Błąd walidacji:", err.errors);
+    } else {
+      console.error("Błąd");
+    }
+  }
+}
+
 createBooks();
+createUser();
+
+async function getUser(username) {
+  const user = await UserModel.findAll({
+    where: {
+      ["username"]: username,
+    },
+  });
+
+  return user;
+}
+
+async function setUser(user) {
+  const id = (await UserModel.max("id")) + 1;
+  user.id = id;
+  console.log(user);
+  await UserModel.create(user);
+}
 
 async function getAllBooks(fromId, toId) {
   const books = await BookModel.findAll({
@@ -77,10 +116,6 @@ async function updateBook(updatedBook) {
   try {
     const book = await BookModel.findByPk(updatedBook.id);
 
-    if (!book) {
-      return false;
-    }
-
     await book.update({
       title: updatedBook.title,
       author: updatedBook.author,
@@ -89,7 +124,7 @@ async function updateBook(updatedBook) {
 
     console.log("Book updated successfully");
   } catch (error) {
-    console.error("Error updating book:", error);
+    throw new Error("Error updating book:", error);
   }
 }
 
@@ -116,4 +151,6 @@ module.exports = {
   deleteById,
   deleteAllBooksByGenre,
   getMaxId,
+  getUser,
+  setUser,
 };
